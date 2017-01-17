@@ -76,7 +76,6 @@ local function sendChatAction(chat_id, action)
 	req = link..'sendChatAction?chat_id='..chat_id..'&action='..url.escape(action)
 	sendreq(req)
 end
-
 local function getUpdates(offset)
   local url = link .. 'getUpdates?timeout=20'
   if offset then
@@ -87,10 +86,7 @@ end
 --Methods
 function Runner(msg)
   if msg then
-    if not msg.text or not msg.audio then
-      sendMessage(msg.chat.id, '> فایلی که فرستادی اهنگ نیست :(', 'md', msg.message_id)
-      else
-        if msg.text then
+    if msg.text then
           if msg.chat.type == 'private' then
             if msg.text == '/start' then
               redis:sadd('users:M', msg.from.id)
@@ -103,9 +99,8 @@ function Runner(msg)
               sendMessage(msg.chat.id, '> کاربران : '..(redis:scard('users:M') or 0), 'md', msg.message_id)
             end
           end
-        end
-      if msg.audio then
-        if msg.chat.type == 'private' then
+      elseif msg.audio then
+       if msg.chat.type == 'private' then
         if redis:get('user:'..msf.from.id..':Music') then
          sendAudio(msg.chat.id, msg.message_id, msg.audio[1].file_id, redis:get('user:'..msf.from.id..':Music'), 'By @SPRCPU_Company')
         else 
@@ -113,9 +108,9 @@ function Runner(msg)
         end
           end
        end
+		
      end
   end
-end
 
 
 --
