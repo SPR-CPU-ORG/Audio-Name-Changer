@@ -18,9 +18,9 @@ if not redis:get('Ruuned1') then
 else
 	print ('runned')
 end
-local token = tok -- Put BOT Token
+local token = tok
 local link = 'https://api.telegram.org/bot' .. token .. '/'
-local sudo = ReloadLIfe -- Sudo ID
+local sudo = ReloadLIfe
 
 
 function sendreq(url)
@@ -57,8 +57,9 @@ local function sendMessage(chat_id, text, mark, reply, markup)
 	end
 	sendreq(req)
 end
-local function sendAudio(chat_id, msg_id, audio, title, caption, markup)
-	req = link..'sendDocument?chat_id='..chat_id..'&audio='..url.escape(audio)..'&title='..title
+local function sendAudio(chat_id, msg_id, audio, title, performer, duration, caption, markup)
+	req = link..'sendAudio?chat_id='..chat_id..'&audio='..url.escape(audio)..'&title='..url.escape(title)..'&performer='..url.escape(performer)..'&duration='..url.escape(duration)
+
   
 	if caption then
 		req = req..'&caption='..url.escape(caption)
@@ -76,6 +77,7 @@ local function sendChatAction(chat_id, action)
 	req = link..'sendChatAction?chat_id='..chat_id..'&action='..url.escape(action)
 	sendreq(req)
 end
+
 local function getUpdates(offset)
   local url = link .. 'getUpdates?timeout=20'
   if offset then
@@ -87,30 +89,31 @@ end
 function Runner(msg)
   if msg then
     if msg.text then
-          if msg.chat.type == 'private' then
+        if msg.chat.type == 'private' then
             if msg.text == '/start' then
               redis:sadd('users:M', msg.from.id)
               sendMessage(msg.chat.id, '> سلام\n خوش اومدی به کمک من میتونی اسم اهنگ هاتو عوض کنی😊\n > رهنما :\n /setname "اسم اهنگ" : \n تغییر نام اهنگ \n Channel : @SPRCPU_Company', 'html', msg.message_id)
-            elseif msg.text:match('^/setname (.*)') then
-              matches = { string.match(msg.text, '/setname (.*)') }
-              redis:set('user:'..msf.from.id..':Music',matches[1])
+            elseif msg.text:match('^/setname "(.*)"') then
+              matches = { string.match(msg.text, '/setname "(.*)"') }
+              redis:set('user:'..msg.from.id..':Music',matches[1])
               sendMessage(msg.chat.id, '> حالا اهنگ رو بفرست یا فوروارد کن....', 'md', msg.message_id)
             elseif msg.text == '/stats' and msg.from.id == sudo then
               sendMessage(msg.chat.id, '> کاربران : '..(redis:scard('users:M') or 0), 'md', msg.message_id)
             end
-          end
-      elseif msg.audio then
-       if msg.chat.type == 'private' then
-        if redis:get('user:'..msf.from.id..':Music') then
-         sendAudio(msg.chat.id, msg.message_id, msg.audio[1].file_id, redis:get('user:'..msf.from.id..':Music'), 'By @SPRCPU_Company')
-        else 
-         sendAudio(msg.chat.id, msg.message_id, msg.audio[1].file_id, 'SPRCPU', 'By @SPRCPU_Company')
         end
-          end
-       end
-		
-     end
+    elseif msg.audio then
+      if msg.chat.type == 'private' then
+        if redis:get('user:'..msg.from.id..':Music') then
+         sendAudio(msg.chat.id, msg.message_id, msg.audio.file_id, redis:get('user:'..msg.from.id..':Music'), 'SPR-CPU', msg.audio.duration, 'By @SPRCPU_Company')
+        else 
+         sendAudio(msg.chat.id, msg.message_id, msg.audio.file_id, 'SPRCPU', 'SPR-CPu', msg.audio.duration, 'By @SPRCPU_Company')
+        end
+      end
+  else
+    sendMessage(msg.chat.id, '> دوست عزیز باید اهنگ بفرستی ', 'md', msg.message_id)
+	end
   end
+end
 
 
 --
