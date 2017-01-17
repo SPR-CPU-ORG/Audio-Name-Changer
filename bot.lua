@@ -15,6 +15,8 @@ if not redis:get('Ruuned1') then
 	tok = io.read()
 	io.write('Sudo : \n')
 	ReloadLIfe = io.read()
+else
+	print ('runned')
 end
 local token = tok -- Put BOT Token
 local link = 'https://api.telegram.org/bot' .. token .. '/'
