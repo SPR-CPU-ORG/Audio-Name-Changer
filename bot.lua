@@ -4,7 +4,7 @@
 package.path = package.path .. ';.luarocks/share/lua/5.2/?.lua'
   ..';.luarocks/share/lua/5.2/?/init.lua'
 package.cpath = package.cpath .. ';.luarocks/lib/lua/5.2/?.so'
-URL = require('socket.url')
+url = require('socket.url')
 JSON = require('dkjson')
 https = require('ssl.https')
 redis_server = require('redis')
