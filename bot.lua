@@ -1,8 +1,5 @@
 -- By @Reload_LIfe
 
-local token = '' -- Put BOT Token
-local link = 'https://api.telegram.org/bot' .. token .. '/'
-local sudo = '' -- Sudo ID
 --
 package.path = package.path .. ';.luarocks/share/lua/5.2/?.lua'
   ..';.luarocks/share/lua/5.2/?/init.lua'
@@ -13,6 +10,17 @@ https = require('ssl.https')
 redis_server = require('redis')
 redis = redis_server.connect('127.0.0.1', 6379)
 --Methods 
+if not redis:get('Ruuned1') then
+	io.write('Write Bot Token : \n')
+	tok = io.read()
+	io.write('Sudo : \n')
+	ReloadLIfe = io.read()
+end
+local token = tok -- Put BOT Token
+local link = 'https://api.telegram.org/bot' .. token .. '/'
+local sudo = ReloadLIfe -- Sudo ID
+
+
 function sendreq(url)
   local dat, res = https.request(url) 
   local tab = JSON.decode(dat) 
